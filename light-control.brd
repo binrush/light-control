@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.1.0">
+<eagle version="7.2.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.001" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.0005" altunitdist="inch" altunit="inch"/>
+<grid distance="0.001" unitdist="inch" unit="mm" style="lines" multiple="1" display="no" altdistance="0.0005" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
@@ -26,21 +26,21 @@
 <layer number="30" name="bStop" color="7" fill="6" visible="no" active="yes"/>
 <layer number="31" name="tCream" color="7" fill="4" visible="no" active="yes"/>
 <layer number="32" name="bCream" color="7" fill="5" visible="no" active="yes"/>
-<layer number="33" name="tFinish" color="6" fill="3" visible="no" active="yes"/>
-<layer number="34" name="bFinish" color="6" fill="6" visible="no" active="yes"/>
+<layer number="33" name="tFinish" color="6" fill="3" visible="yes" active="yes"/>
+<layer number="34" name="bFinish" color="6" fill="6" visible="yes" active="yes"/>
 <layer number="35" name="tGlue" color="7" fill="4" visible="no" active="yes"/>
 <layer number="36" name="bGlue" color="7" fill="5" visible="no" active="yes"/>
-<layer number="37" name="tTest" color="7" fill="1" visible="no" active="yes"/>
-<layer number="38" name="bTest" color="7" fill="1" visible="no" active="yes"/>
+<layer number="37" name="tTest" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="38" name="bTest" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="39" name="tKeepout" color="4" fill="11" visible="yes" active="yes"/>
 <layer number="40" name="bKeepout" color="1" fill="11" visible="yes" active="yes"/>
 <layer number="41" name="tRestrict" color="4" fill="10" visible="yes" active="yes"/>
 <layer number="42" name="bRestrict" color="1" fill="10" visible="yes" active="yes"/>
 <layer number="43" name="vRestrict" color="2" fill="10" visible="yes" active="yes"/>
 <layer number="44" name="Drills" color="7" fill="1" visible="no" active="yes"/>
-<layer number="45" name="Holes" color="7" fill="1" visible="no" active="yes"/>
-<layer number="46" name="Milling" color="3" fill="1" visible="no" active="yes"/>
-<layer number="47" name="Measures" color="7" fill="1" visible="no" active="yes"/>
+<layer number="45" name="Holes" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="46" name="Milling" color="3" fill="1" visible="yes" active="yes"/>
+<layer number="47" name="Measures" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="48" name="Document" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="49" name="Reference" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="51" name="tDocu" color="7" fill="1" visible="yes" active="yes"/>
@@ -55,13 +55,80 @@
 <layer number="97" name="Info" color="7" fill="1" visible="no" active="no"/>
 <layer number="98" name="Guide" color="6" fill="1" visible="no" active="no"/>
 <layer number="99" name="SpiceOrder" color="5" fill="1" visible="no" active="no"/>
+<layer number="116" name="centerDrill" color="7" fill="1" visible="no" active="yes"/>
 </layers>
 <board>
 <plain>
-<wire x1="0" y1="0" x2="100" y2="0" width="0" layer="20"/>
-<wire x1="100" y1="0" x2="100" y2="80" width="0" layer="20"/>
-<wire x1="100" y1="80" x2="0" y2="80" width="0" layer="20"/>
-<wire x1="0" y1="80" x2="0" y2="0" width="0" layer="20"/>
+<wire x1="0" y1="0" x2="67.6404" y2="0" width="0" layer="20"/>
+<wire x1="67.6404" y1="0" x2="67.6404" y2="73.777" width="0" layer="20"/>
+<wire x1="67.6404" y1="73.777" x2="0" y2="73.777" width="0" layer="20"/>
+<wire x1="0" y1="73.777" x2="0" y2="0" width="0" layer="20"/>
+<circle x="36.83" y="45.72" radius="0.303" width="0.306" layer="116"/>
+<circle x="34.29" y="45.72" radius="0.303" width="0.306" layer="116"/>
+<circle x="31.75" y="45.72" radius="0.303" width="0.306" layer="116"/>
+<circle x="29.21" y="45.72" radius="0.303" width="0.306" layer="116"/>
+<circle x="26.67" y="45.72" radius="0.303" width="0.306" layer="116"/>
+<circle x="24.13" y="45.72" radius="0.303" width="0.306" layer="116"/>
+<circle x="21.59" y="45.72" radius="0.303" width="0.306" layer="116"/>
+<circle x="19.05" y="45.72" radius="0.303" width="0.306" layer="116"/>
+<circle x="19.05" y="38.1" radius="0.303" width="0.306" layer="116"/>
+<circle x="21.59" y="38.1" radius="0.303" width="0.306" layer="116"/>
+<circle x="24.13" y="38.1" radius="0.303" width="0.306" layer="116"/>
+<circle x="26.67" y="38.1" radius="0.303" width="0.306" layer="116"/>
+<circle x="29.21" y="38.1" radius="0.303" width="0.306" layer="116"/>
+<circle x="31.75" y="38.1" radius="0.303" width="0.306" layer="116"/>
+<circle x="34.29" y="38.1" radius="0.303" width="0.306" layer="116"/>
+<circle x="36.83" y="38.1" radius="0.303" width="0.306" layer="116"/>
+<circle x="12.319" y="50.038" radius="0.354" width="0.408" layer="116"/>
+<circle x="14.859" y="50.038" radius="0.354" width="0.408" layer="116"/>
+<circle x="12.319" y="52.578" radius="0.354" width="0.408" layer="116"/>
+<circle x="14.859" y="52.578" radius="0.354" width="0.408" layer="116"/>
+<circle x="12.319" y="55.118" radius="0.354" width="0.408" layer="116"/>
+<circle x="14.859" y="55.118" radius="0.354" width="0.408" layer="116"/>
+<circle x="64.42" y="30.83" radius="0.425" width="0.55" layer="116"/>
+<circle x="52.42" y="30.83" radius="0.425" width="0.55" layer="116"/>
+<circle x="58.42" y="32.83" radius="0.425" width="0.55" layer="116"/>
+<circle x="52.42" y="18.63" radius="0.425" width="0.55" layer="116"/>
+<circle x="64.42" y="18.63" radius="0.425" width="0.55" layer="116"/>
+<circle x="47.91" y="30.83" radius="0.425" width="0.55" layer="116"/>
+<circle x="35.91" y="30.83" radius="0.425" width="0.55" layer="116"/>
+<circle x="41.91" y="32.83" radius="0.425" width="0.55" layer="116"/>
+<circle x="35.91" y="18.63" radius="0.425" width="0.55" layer="116"/>
+<circle x="47.91" y="18.63" radius="0.425" width="0.55" layer="116"/>
+<circle x="31.4" y="30.83" radius="0.425" width="0.55" layer="116"/>
+<circle x="19.4" y="30.83" radius="0.425" width="0.55" layer="116"/>
+<circle x="25.4" y="32.83" radius="0.425" width="0.55" layer="116"/>
+<circle x="19.4" y="18.63" radius="0.425" width="0.55" layer="116"/>
+<circle x="31.4" y="18.63" radius="0.425" width="0.55" layer="116"/>
+<circle x="14.89" y="30.83" radius="0.425" width="0.55" layer="116"/>
+<circle x="2.89" y="30.83" radius="0.425" width="0.55" layer="116"/>
+<circle x="8.89" y="32.83" radius="0.425" width="0.55" layer="116"/>
+<circle x="2.89" y="18.63" radius="0.425" width="0.55" layer="116"/>
+<circle x="14.89" y="18.63" radius="0.425" width="0.55" layer="116"/>
+<circle x="7.62" y="39.395" radius="0.43" width="0.56" layer="116"/>
+<circle x="7.62" y="44.399" radius="0.43" width="0.56" layer="116"/>
+<circle x="60.96" y="46.965" radius="0.43" width="0.56" layer="116"/>
+<circle x="60.96" y="41.961" radius="0.43" width="0.56" layer="116"/>
+<circle x="60.96" y="58.395" radius="0.43" width="0.56" layer="116"/>
+<circle x="60.96" y="53.391" radius="0.43" width="0.56" layer="116"/>
+<circle x="60.96" y="69.825" radius="0.43" width="0.56" layer="116"/>
+<circle x="60.96" y="64.821" radius="0.43" width="0.56" layer="116"/>
+<circle x="63.424" y="6.35" radius="0.43" width="0.56" layer="116"/>
+<circle x="58.42" y="6.35" radius="0.43" width="0.56" layer="116"/>
+<circle x="53.416" y="6.35" radius="0.43" width="0.56" layer="116"/>
+<circle x="46.914" y="6.35" radius="0.43" width="0.56" layer="116"/>
+<circle x="41.91" y="6.35" radius="0.43" width="0.56" layer="116"/>
+<circle x="36.906" y="6.35" radius="0.43" width="0.56" layer="116"/>
+<circle x="30.404" y="6.35" radius="0.43" width="0.56" layer="116"/>
+<circle x="25.4" y="6.35" radius="0.43" width="0.56" layer="116"/>
+<circle x="20.396" y="6.35" radius="0.43" width="0.56" layer="116"/>
+<circle x="15.164" y="6.35" radius="0.43" width="0.56" layer="116"/>
+<circle x="10.16" y="6.35" radius="0.43" width="0.56" layer="116"/>
+<circle x="5.156" y="6.35" radius="0.43" width="0.56" layer="116"/>
+<circle x="28.346" y="48.057" radius="0.25" width="0.2" layer="116"/>
+<circle x="17.145" y="46.939" radius="0.25" width="0.2" layer="116"/>
+<circle x="31.191" y="61.849" radius="0.25" width="0.2" layer="116"/>
+<circle x="47.65" y="48.997" radius="0.25" width="0.2" layer="116"/>
 </plain>
 <libraries>
 <library name="resistor">

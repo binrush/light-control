@@ -4,3 +4,5 @@
 *.b#*
 *.s#*
 eagle.epf
+*.o
+*.lst
