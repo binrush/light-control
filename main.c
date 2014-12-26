@@ -9,9 +9,11 @@
 
 #define VIRTUAL_TIMERS_COUNT 2
 #define TIMER_BUTTON0 0
+#define TIMER_ROOM 1
 
 #define BUTTON_NOISE_DELAY 100
 #define BUTTON_LONG_PUSH 1000
+#define SWITCH_TIMEOUT 1000
 
 #define STATE_BUTTON_RELEASED 0
 #define STATE_BUTTON_NOISE_DELAY 1
@@ -19,13 +21,19 @@
 #define STATE_BUTTON_WAIT_RELEASE 3
 
 #define STATE_ROOM_DARK 0
-#define STATE_ROOM_CHAN0 1
-#define STATE_ROOM_CHAN2 2
+#define STATE_ROOM_LIGHT_WAIT_SWITCH 1
+#define STATE_ROOM_CHAN0_WAIT_SWITCH 2
 #define STATE_ROOM_LIGHT 3
 
 #define BUTTON0_DDR DDRC
 #define BUTTON0_PIN PINC
 #define BUTTON0_BIT PC4
+
+#define CHAN_DDR DDRC
+#define CHAN_PORT PORTC
+
+#define CHAN0_BIT PC0
+#define CHAN1_BIT PC1
 
 #define MSG_INACTIVE 0
 #define MSG_SENT 1
@@ -104,23 +112,55 @@ void button_fsm() {
             break;
         default:
             button0_state = STATE_BUTTON_RELEASED;
+            break;
     }
 }
 
 void room_fsm() {
     switch(room_state) {
-        case STATE_ROOM_DARK;
+        case STATE_ROOM_DARK:
             if (msg_get(MSG_BUTTON_SHORT)) {
-                
+                CHAN_PORT |= 1<<CHAN0_BIT;
+                CHAN_PORT |= 1<<CHAN1_BIT;
+            }
+            room_state = STATE_ROOM_LIGHT_WAIT_SWITCH;
+            timers[TIMER_ROOM]++;
+            break;
+        case STATE_ROOM_LIGHT_WAIT_SWITCH:
+            if (msg_get(MSG_BUTTON_SHORT)) {
+                CHAN_PORT &= ~(1<<CHAN1_BIT);
+                room_state = STATE_ROOM_CHAN0_WAIT_SWITCH;
+                timers[TIMER_ROOM] = 1;
+                break;
+            }
+            if (timers[TIMER_ROOM] >= SWITCH_TIMEOUT) {
+                room_state = STATE_ROOM_LIGHT;
+                timers[TIMER_ROOM] = 0;
             }
             break;
-        case STATE_ROOM_LIGHT;
+        case STATE_ROOM_CHAN0_WAIT_SWITCH:
+            if (msg_get(MSG_BUTTON_SHORT)) {
+                CHAN_PORT &= ~(1<<CHAN0_BIT);
+                CHAN_PORT |= 1<<CHAN1_BIT;
+                room_state = STATE_ROOM_LIGHT;
+                timers[TIMER_ROOM] = 0;
+                break;
+            }
+            if (timers[TIMER_ROOM] >= SWITCH_TIMEOUT) {
+                room_state = STATE_ROOM_LIGHT;
+                timers[TIMER_ROOM] = 0;
+            }
             break;
-        case STATE_ROOM_CHAN0;
-            break;
-        case STATE_ROOM_CHAN1;
+        case STATE_ROOM_LIGHT:
+            if (msg_get(MSG_BUTTON_SHORT)) {
+                CHAN_PORT &= ~(1<<CHAN0_BIT|1<<CHAN1_BIT);
+                room_state = STATE_ROOM_DARK;
+            }
             break;
         default:
+            CHAN_PORT &= ~(1<<CHAN0_BIT|1<<CHAN1_BIT);
+            room_state = STATE_ROOM_DARK;
+            timers[TIMER_ROOM] = 0; 
             break;
     }
 }
@@ -130,8 +170,12 @@ int main() {
     //timer
     TCCR0 |= 1<<CS02|1<<CS00;
     TIMSK |= 1<<TOIE0;
-    
+
+    //output ports
+    CHAN_DDR |= 1<<CHAN0_BIT|1<<CHAN1_BIT;
+ 
     button_fsm();
+    room_fsm();
     msg_process();
     return 0;
 }
