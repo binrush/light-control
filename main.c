@@ -1,16 +1,13 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include <util/atomic.h>
 
+#include "messages.h"
+#include "timers.h"
 
 #define STATE_LIGHT_OFF 0
 #define STATE_LIGHT_ON_WAIT_RELEASE 1
 #define STATE_LIGHT_ON 2
 #define STATE_LIGHT_OFF_WAIT_RELEASE 3
-
-#define VIRTUAL_TIMERS_COUNT 2
-#define TIMER_BUTTON0 0
-#define TIMER_ROOM 1
 
 #define BUTTON_NOISE_DELAY 25
 #define BUTTON_LONG_PUSH 500
@@ -38,72 +35,16 @@
 #define CHAN2_BIT PC2
 #define CHAN3_BIT PC3
 
-#define MSG_INACTIVE 0
-#define MSG_SENT 1
-#define MSG_ACTIVE 2
-
-#define MSG_BUTTON_SHORT 0
-#define MSG_BUTTON_LONG 1
-
-#define MESSAGES_COUNT 2
 
 uint8_t button0_state = STATE_BUTTON_RELEASED;
 uint8_t room_state = STATE_ROOM_DARK;
 
-uint16_t timers[VIRTUAL_TIMERS_COUNT] = {};
-uint8_t messages[MESSAGES_COUNT] = {};
 
 ISR(TIMER0_OVF_vect) {
-   uint8_t i;
-   for ( i = 0; i < VIRTUAL_TIMERS_COUNT; i++ ) {
-        if ( timers[i] > 0 && timers[i] < UINT16_MAX) {
-               timers[i]++;
-        }
-    } 
+    timers_process();
 }
 
-void timer_start(uint8_t timer_id) {
-    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-        timers[timer_id] = 1;
-    }
 
-}
-
-void timer_stop(uint8_t timer_id) {
-    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-        timers[timer_id] = 0;
-    }
-
-}
-
-uint16_t timer_get(uint8_t timer_id) {
-    uint16_t value;
-    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-        value = timers[timer_id];
-    }
-    return value;
-}
-
-void msg_send(uint8_t id) {
-    if (messages[id] == MSG_INACTIVE) {
-        messages[id] = MSG_SENT;
-    }
-}
-
-void msg_process() {
-    uint8_t i;
-    for ( i = 0; i < MESSAGES_COUNT; i++ ) {
-        if ( messages[i] == MSG_SENT ) {
-            messages[i] = MSG_ACTIVE; 
-        } else if (messages[i] == MSG_ACTIVE) {
-            messages[i] = MSG_INACTIVE;
-        }
-    }
-}
-
-uint8_t msg_get(uint8_t id) {
-    return messages[id] == MSG_ACTIVE;
-}
 
 void button_fsm() {
     switch(button0_state) {

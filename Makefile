@@ -12,6 +12,7 @@ CC=avr-gcc
 hex: $(SRC)
 	avr-objcopy -j .text -j .data -O ihex $(SRC) $(SRC).flash.hex
 
+$(SRC): main.o messages.o timers.o
 
 upload: hex
 	avrdude -P /dev/ttyACM0 -b $(BAUD) -c avrisp -p m8 -U flash:w:$(SRC).flash.hex:i
