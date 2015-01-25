@@ -8,10 +8,7 @@
 #define MSG_SENT 1
 #define MSG_ACTIVE 2
 
-#define MSG_BUTTON_SHORT 0
-#define MSG_BUTTON_LONG 1
-
-#define MESSAGES_COUNT 2
+#define MESSAGES_COUNT 6
 
 
 void msg_send(uint8_t id);

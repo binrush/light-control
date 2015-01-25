@@ -9,6 +9,11 @@
 #define TIMER_BUTTON2 2
 #define TIMER_ROOM 3
 
+#define MSG_BUTTON0_SHORT 0
+#define MSG_BUTTON0_LONG 1
+#define MSG_BUTTON1_SHORT 2
+#define MSG_BUTTON1_LONG 3
+
 #define BUTTON_NOISE_DELAY 25
 #define BUTTON_LONG_PUSH 500
 #define SWITCH_TIMEOUT 500
@@ -46,7 +51,7 @@ ISR(TIMER0_OVF_vect) {
 
 
 
-uint8_t button_fsm(uint8_t state, uint8_t timer) {
+uint8_t button_fsm(uint8_t state, uint8_t timer, uint8_t msg_short, uint8_t msg_long) {
     switch(state) {
         case STATE_BUTTON_RELEASED:
             if ( ! (BUTTON0_PIN & ( 1<< BUTTON0_BIT) ) ) {
@@ -61,11 +66,11 @@ uint8_t button_fsm(uint8_t state, uint8_t timer) {
             break;
         case STATE_BUTTON_COUNT_LENGTH:
             if ( timer_get(timer) >= BUTTON_LONG_PUSH ) {
-                msg_send(MSG_BUTTON_LONG);
+                msg_send(msg_long);
                 timer_stop(timer);
                 state = STATE_BUTTON_WAIT_RELEASE;
             } else if ( BUTTON0_PIN & ( 1<< BUTTON0_BIT )) {
-                msg_send(MSG_BUTTON_SHORT);
+                msg_send(msg_short);
                 state = STATE_BUTTON_RELEASED;
                 timer_stop(timer);
             }
@@ -85,7 +90,7 @@ uint8_t button_fsm(uint8_t state, uint8_t timer) {
 void room_fsm() {
     switch(room_state) {
         case STATE_ROOM_DARK:
-            if (msg_get(MSG_BUTTON_SHORT)) {
+            if (msg_get(MSG_BUTTON1_SHORT)) {
                 CHAN_PORT |= 1<<CHAN0_BIT;
                 CHAN_PORT |= 1<<CHAN1_BIT;
                 room_state = STATE_ROOM_LIGHT_WAIT_SWITCH;
@@ -93,7 +98,7 @@ void room_fsm() {
             }
             break;
         case STATE_ROOM_LIGHT_WAIT_SWITCH:
-            if (msg_get(MSG_BUTTON_SHORT)) {
+            if (msg_get(MSG_BUTTON1_SHORT)) {
                 CHAN_PORT &= ~(1<<CHAN1_BIT);
                 room_state = STATE_ROOM_CHAN0_WAIT_SWITCH;
                 timer_start(TIMER_ROOM);
@@ -103,7 +108,7 @@ void room_fsm() {
             }
             break;
         case STATE_ROOM_CHAN0_WAIT_SWITCH:
-            if (msg_get(MSG_BUTTON_SHORT)) {
+            if (msg_get(MSG_BUTTON1_SHORT)) {
                 CHAN_PORT &= ~(1<<CHAN0_BIT);
                 CHAN_PORT |= 1<<CHAN1_BIT;
                 room_state = STATE_ROOM_LIGHT;
@@ -116,7 +121,7 @@ void room_fsm() {
             }
             break;
         case STATE_ROOM_LIGHT:
-            if (msg_get(MSG_BUTTON_SHORT)) {
+            if (msg_get(MSG_BUTTON1_SHORT)) {
                 CHAN_PORT &= ~(1<<CHAN0_BIT|1<<CHAN1_BIT);
                 room_state = STATE_ROOM_DARK;
             }
@@ -138,7 +143,7 @@ int main() {
     CHAN_DDR |= 1<<CHAN0_BIT | 1<<CHAN1_BIT | 1<<CHAN2_BIT | 1<<CHAN3_BIT;
     sei();
     while(1) { 
-        button1_state = button_fsm(button1_state, TIMER_BUTTON1);
+        button1_state = button_fsm(button1_state, TIMER_BUTTON1, MSG_BUTTON1_SHORT, MSG_BUTTON1_LONG);
         room_fsm();
         msg_process();
     }
