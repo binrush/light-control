@@ -1,8 +1,6 @@
 #include <inttypes.h>
 
-#define VIRTUAL_TIMERS_COUNT 2
-#define TIMER_BUTTON0 0
-#define TIMER_ROOM 1
+#define VIRTUAL_TIMERS_COUNT 4
 
 void timer_start(uint8_t timer_id);
 
