@@ -46,39 +46,40 @@ ISR(TIMER0_OVF_vect) {
 
 
 
-void button_fsm() {
-    switch(button0_state) {
+uint8_t button_fsm(uint8_t state) {
+    switch(state) {
         case STATE_BUTTON_RELEASED:
             if ( ! (BUTTON0_PIN & ( 1<< BUTTON0_BIT) ) ) {
-                button0_state = STATE_BUTTON_NOISE_DELAY;
+                state = STATE_BUTTON_NOISE_DELAY;
                 timer_start(TIMER_BUTTON0);
             }
             break;
         case STATE_BUTTON_NOISE_DELAY:
             if (timer_get(TIMER_BUTTON0) >= BUTTON_NOISE_DELAY) {
-                button0_state = STATE_BUTTON_COUNT_LENGTH;
+                state = STATE_BUTTON_COUNT_LENGTH;
             }
             break;
         case STATE_BUTTON_COUNT_LENGTH:
             if ( timer_get(TIMER_BUTTON0) >= BUTTON_LONG_PUSH ) {
                 msg_send(MSG_BUTTON_LONG);
                 timer_stop(TIMER_BUTTON0);
-                button0_state = STATE_BUTTON_WAIT_RELEASE;
+                state = STATE_BUTTON_WAIT_RELEASE;
             } else if ( BUTTON0_PIN & ( 1<< BUTTON0_BIT )) {
                 msg_send(MSG_BUTTON_SHORT);
-                button0_state = STATE_BUTTON_RELEASED;
+                state = STATE_BUTTON_RELEASED;
                 timer_stop(TIMER_BUTTON0);
             }
             break;
         case STATE_BUTTON_WAIT_RELEASE:
             if ( BUTTON0_PIN & ( 1<< BUTTON0_BIT)) {
-                button0_state = STATE_BUTTON_RELEASED;
+                state = STATE_BUTTON_RELEASED;
             }
             break;
         default:
-            button0_state = STATE_BUTTON_RELEASED;
+            state = STATE_BUTTON_RELEASED;
             break;
     }
+    return state;
 }
 
 void room_fsm() {
@@ -137,7 +138,7 @@ int main() {
     CHAN_DDR |= 1<<CHAN0_BIT | 1<<CHAN1_BIT | 1<<CHAN2_BIT | 1<<CHAN3_BIT;
     sei();
     while(1) { 
-        button_fsm();
+        button0_state = button_fsm(button0_state);
         room_fsm();
         msg_process();
     }
