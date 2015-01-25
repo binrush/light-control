@@ -28,9 +28,9 @@
 #define STATE_ROOM_CHAN0_WAIT_SWITCH 2
 #define STATE_ROOM_LIGHT 3
 
-#define BUTTON0_DDR DDRC
-#define BUTTON0_PIN PINC
-#define BUTTON0_BIT PC5
+#define BUTTON1_DDR DDRC
+#define BUTTON1_PIN PINC
+#define BUTTON1_BIT PC5
 
 #define CHAN_DDR DDRC
 #define CHAN_PORT PORTC
@@ -51,10 +51,10 @@ ISR(TIMER0_OVF_vect) {
 
 
 
-uint8_t button_fsm(uint8_t state, uint8_t timer, uint8_t msg_short, uint8_t msg_long) {
+uint8_t button_fsm(uint8_t state, uint8_t timer, uint8_t msg_short, uint8_t msg_long, volatile uint8_t *pin, uint8_t bit) {
     switch(state) {
         case STATE_BUTTON_RELEASED:
-            if ( ! (BUTTON0_PIN & ( 1<< BUTTON0_BIT) ) ) {
+            if ( ! (*pin & ( 1<< bit) ) ) {
                 state = STATE_BUTTON_NOISE_DELAY;
                 timer_start(timer);
             }
@@ -69,14 +69,14 @@ uint8_t button_fsm(uint8_t state, uint8_t timer, uint8_t msg_short, uint8_t msg_
                 msg_send(msg_long);
                 timer_stop(timer);
                 state = STATE_BUTTON_WAIT_RELEASE;
-            } else if ( BUTTON0_PIN & ( 1<< BUTTON0_BIT )) {
+            } else if ( *pin & ( 1<< bit)) {
                 msg_send(msg_short);
                 state = STATE_BUTTON_RELEASED;
                 timer_stop(timer);
             }
             break;
         case STATE_BUTTON_WAIT_RELEASE:
-            if ( BUTTON0_PIN & ( 1<< BUTTON0_BIT)) {
+            if ( *pin & ( 1<< bit)) {
                 state = STATE_BUTTON_RELEASED;
             }
             break;
@@ -91,8 +91,7 @@ void room_fsm() {
     switch(room_state) {
         case STATE_ROOM_DARK:
             if (msg_get(MSG_BUTTON1_SHORT)) {
-                CHAN_PORT |= 1<<CHAN0_BIT;
-                CHAN_PORT |= 1<<CHAN1_BIT;
+                CHAN_PORT |= 1<<CHAN0_BIT|1<<CHAN1_BIT;
                 room_state = STATE_ROOM_LIGHT_WAIT_SWITCH;
                 timer_start(TIMER_ROOM);
             }
@@ -143,7 +142,7 @@ int main() {
     CHAN_DDR |= 1<<CHAN0_BIT | 1<<CHAN1_BIT | 1<<CHAN2_BIT | 1<<CHAN3_BIT;
     sei();
     while(1) { 
-        button1_state = button_fsm(button1_state, TIMER_BUTTON1, MSG_BUTTON1_SHORT, MSG_BUTTON1_LONG);
+        button1_state = button_fsm(button1_state, TIMER_BUTTON1, MSG_BUTTON1_SHORT, MSG_BUTTON1_LONG, &BUTTON1_PIN, BUTTON1_BIT);
         room_fsm();
         msg_process();
     }
