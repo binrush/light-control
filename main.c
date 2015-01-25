@@ -10,11 +10,9 @@
 #define TIMER_ROOM 3
 
 #define MSG_BUTTON0_SHORT 0
-#define MSG_BUTTON0_LONG 1
-#define MSG_BUTTON1_SHORT 2
-#define MSG_BUTTON1_LONG 3
-#define MSG_BUTTON2_SHORT 4
-#define MSG_BUTTON2_LONG 5
+#define MSG_BUTTON1_SHORT 1
+#define MSG_BUTTON2_SHORT 2
+#define MSG_BUTTON_LONG 3
 
 #define BUTTON_NOISE_DELAY 25
 #define BUTTON_LONG_PUSH 500
@@ -135,6 +133,9 @@ void room_fsm() {
             if (msg_get(MSG_BUTTON1_SHORT)) {
                 CHAN_PORT &= ~(1<<CHAN0_BIT|1<<CHAN1_BIT);
                 room_state = STATE_ROOM_DARK;
+            } else if ( msg_get(MSG_BUTTON_LONG) ) {
+                CHAN_PORT &= ~(1<<CHAN0_BIT|1<<CHAN1_BIT);
+                room_state = STATE_ROOM_DARK;
             }
             break;
         default:
@@ -163,10 +164,16 @@ void kitchen_fsm() {
             } else if (msg_get(MSG_BUTTON2_SHORT) ) {
                 CHAN_PORT &= ~(1<<CHAN3_BIT);
                 kitchen_state= STATE_KITCHEN_DARK;
+            } else if ( msg_get(MSG_BUTTON_LONG) ) {
+                CHAN_PORT &= ~(1<<CHAN2_BIT|1<<CHAN3_BIT);
+                kitchen_state = STATE_KITCHEN_DARK;
             }
             break;
         case STATE_KITCHEN_LIGHTS:
             if ( msg_get(MSG_BUTTON0_SHORT) ) {
+                CHAN_PORT &= ~(1<<CHAN2_BIT|1<<CHAN3_BIT);
+                kitchen_state = STATE_KITCHEN_DARK;
+            } else if ( msg_get(MSG_BUTTON_LONG) ) {
                 CHAN_PORT &= ~(1<<CHAN2_BIT|1<<CHAN3_BIT);
                 kitchen_state = STATE_KITCHEN_DARK;
             }
@@ -187,9 +194,9 @@ int main() {
     CHAN_DDR |= 1<<CHAN0_BIT | 1<<CHAN1_BIT | 1<<CHAN2_BIT | 1<<CHAN3_BIT;
     sei();
     while(1) { 
-        button0_state = button_fsm(button0_state, TIMER_BUTTON0, MSG_BUTTON0_SHORT, MSG_BUTTON0_LONG, &BUTTON0_PIN, BUTTON0_BIT);
-        button1_state = button_fsm(button1_state, TIMER_BUTTON1, MSG_BUTTON1_SHORT, MSG_BUTTON1_LONG, &BUTTON1_PIN, BUTTON1_BIT);
-        button2_state = button_fsm(button2_state, TIMER_BUTTON2, MSG_BUTTON2_SHORT, MSG_BUTTON2_LONG, &BUTTON2_PIN, BUTTON2_BIT);
+        button0_state = button_fsm(button0_state, TIMER_BUTTON0, MSG_BUTTON0_SHORT, MSG_BUTTON_LONG, &BUTTON0_PIN, BUTTON0_BIT);
+        button1_state = button_fsm(button1_state, TIMER_BUTTON1, MSG_BUTTON1_SHORT, MSG_BUTTON_LONG, &BUTTON1_PIN, BUTTON1_BIT);
+        button2_state = button_fsm(button2_state, TIMER_BUTTON2, MSG_BUTTON2_SHORT, MSG_BUTTON_LONG, &BUTTON2_PIN, BUTTON2_BIT);
         room_fsm();
         kitchen_fsm();
         msg_process();
