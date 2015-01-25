@@ -168,6 +168,7 @@ void kitchen_fsm() {
         case STATE_KITCHEN_LIGHTS:
             if ( msg_get(MSG_BUTTON0_SHORT) ) {
                 CHAN_PORT &= ~(1<<CHAN2_BIT|1<<CHAN3_BIT);
+                kitchen_state = STATE_KITCHEN_DARK;
             }
             break;
         default:
@@ -190,6 +191,7 @@ int main() {
         button1_state = button_fsm(button1_state, TIMER_BUTTON1, MSG_BUTTON1_SHORT, MSG_BUTTON1_LONG, &BUTTON1_PIN, BUTTON1_BIT);
         button2_state = button_fsm(button2_state, TIMER_BUTTON2, MSG_BUTTON2_SHORT, MSG_BUTTON2_LONG, &BUTTON2_PIN, BUTTON2_BIT);
         room_fsm();
+        kitchen_fsm();
         msg_process();
     }
     return 0;
