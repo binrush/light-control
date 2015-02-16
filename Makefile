@@ -1,18 +1,53 @@
-BAUD=19200
-SRC=main
-CONTROLLER=atmega8
-F_CPU=1000000 # 1MHz for accurate baudrate timing
-ISPDEV=/dev/ttyUSB003
-ISPTYPE=arduino
+CHIP=atmega8
+F_CPU=1000000
 
-CFLAGS=-mmcu=$(CONTROLLER) -g -DF_CPU=$(F_CPU) -Wall -Os -Werror -Wextra -std=c99
-LDFLAGS=-mmcu=$(CONTROLLER)
 CC=avr-gcc
+CFLAGS=-mmcu=$(CHIP) -g -DF_CPU=$(F_CPU) -Wall -Os -Werror -Wextra -std=c99
+LDFLAGS=-mmcu=$(CHIP)
 
-hex: $(SRC)
-	avr-objcopy -j .text -j .data -O ihex $(SRC) $(SRC).flash.hex
+#CFLAGS=-g -O2 -Wall -Wextra -rdynamic -DNDEBUG $(OPTFLAGS)
+#LIBS=-ldl $(OPTLIBS)
 
-$(SRC): main.o messages.o timers.o
+SOURCES=$(wildcard *.c)
+OBJECTS=$(patsubst %.c,%.o,$(SOURCES))
 
-upload: hex
-	avrdude -P /dev/ttyACM0 -b $(BAUD) -c avrisp -p m8 -U flash:w:$(SRC).flash.hex:i
+TEST_SRC=$(wildcard tests/*_tests.c)
+TESTS=$(patsubst %.c,%,$(TEST_SRC))
+
+TARGET=main
+
+# The Target Build
+all: hex
+
+$(TARGET): $(OBJECTS)
+
+hex: $(TARGET)
+	avr-objcopy -j .text -j .data -O ihex $(TARGET) $(TARGET).flash.hex
+
+# The Unit Tests
+.PHONY: tests
+tests: CC = cc
+tests: CFLAGS=-g -O2 -Wall -Wextra -I.
+tests: LDFLAGS=
+tests: $(TESTS)
+	sh ./tests/runtests.sh
+
+valgrind:
+	VALGRIND="valgrind --log-file=/tmp/valgrind-%p.log" $(MAKE)
+
+# The Cleaner
+clean:
+	rm -rf $(OBJECTS) $(TESTS) $(TARGET) $(TARGET).lst $(TARGET).flash.hex
+	rm -f tests/tests.log
+	find . -name "*.gc*" -exec rm {} \;
+	rm -rf `find . -name "*.dSYM" -print`
+
+upload: all
+	avrdude -c ft232c -p m8 -U flash:w:$(TARGET).flash.hex:i
+
+# The Checker
+BADFUNCS='[^_.>a-zA-Z0-9](str(n?cpy|n?cat|xfrm|n?dup|str|pbrk|tok|_)|stpn?cpy|a?sn?printf|byte_)'
+check:
+	@echo Files with potentially dangerous functions.
+	@egrep $(BADFUNCS) $(SOURCES) || true
+
