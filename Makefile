@@ -13,6 +13,7 @@ OBJECTS=$(patsubst %.c,%.o,$(SOURCES))
 
 TEST_SRC=$(wildcard tests/*_tests.c)
 TESTS=$(patsubst %.c,%,$(TEST_SRC))
+TESTS_OBJECTS=$(patsubst tests/%_tests.c,%.o,$(TEST_SRC))
 
 TARGET=main
 
@@ -32,8 +33,12 @@ tests: LDFLAGS=
 tests: $(TESTS)
 	sh ./tests/runtests.sh
 
+$(TESTS): $(TESTS_OBJECTS)
+
+$(TESTS_OBJECTS): .FORCE
+
 valgrind:
-	VALGRIND="valgrind --log-file=/tmp/valgrind-%p.log" $(MAKE)
+	VALGRIND="valgrind --error-exitcode=1 --leak-check=full --log-file=/tmp/valgrind-%p.log" $(MAKE) tests
 
 # The Cleaner
 clean:
@@ -51,3 +56,4 @@ check:
 	@echo Files with potentially dangerous functions.
 	@egrep $(BADFUNCS) $(SOURCES) || true
 
+.FORCE:
