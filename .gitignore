@@ -8,3 +8,4 @@ eagle.epf
 *.lst
 main
 tests/*_tests
+tests/tests.log

@@ -25,7 +25,7 @@ uint8_t hall_fsm(uint8_t state, Hall *hall) {
             }
             break;
         case STATE_HALL_LIGHTS:
-            if ( msg_get(hall->msg_id_hall) || msg_get(hall->msg_id_off)) {
+            if ( msg_get(hall->msg_id_hall) || msg_get(hall->msg_id_off) ) {
                 Port_Clear(hall->port_kitchen);
                 Port_Clear(hall->port_hall);
                 state = STATE_HALL_DARK;
