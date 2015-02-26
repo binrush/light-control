@@ -14,6 +14,8 @@ OBJECTS=$(patsubst %.c,%.o,$(SOURCES))
 TEST_SRC=$(wildcard tests/*_tests.c)
 TESTS=$(patsubst %.c,%,$(TEST_SRC))
 TESTS_OBJECTS=$(patsubst tests/%_tests.c,%.o,$(TEST_SRC))
+MOCKS_SRC=$(wildcard tests/*_mock.c)
+MOCKS_OBJECTS=$(patsubst tests/%_mock.c,tests/%_mock.o,$(MOCKS_SRC))
 
 TARGET=main
 
@@ -33,7 +35,7 @@ tests: LDFLAGS=
 tests: $(TESTS)
 	sh ./tests/runtests.sh
 
-$(TESTS): $(TESTS_OBJECTS)
+$(TESTS): $(TESTS_OBJECTS) $(MOCKS_OBJECTS)
 
 $(TESTS_OBJECTS): .FORCE
 

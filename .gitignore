@@ -7,3 +7,4 @@ eagle.epf
 *.o
 *.lst
 main
+tests/*_tests
