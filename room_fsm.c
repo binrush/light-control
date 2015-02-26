@@ -29,8 +29,7 @@ uint8_t room_fsm(uint8_t state, Room *room) {
                 state = STATE_ROOM_LIGHT;
                 timer_stop(room->timer_id);
                 break;
-            }
-            if ( timer_get(room->timer_id) >= SWITCH_TIMEOUT ) {
+            } else if ( timer_get(room->timer_id) >= SWITCH_TIMEOUT ) {
                 state = STATE_ROOM_LIGHT;
                 timer_stop(room->timer_id);
             }
