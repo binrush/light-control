@@ -17,7 +17,7 @@ Button button_room = {
     .timer_id     = 0,
     .msg_id_short = MSG_BUTTON_ROOM,
     .msg_id_long  = MSG_BUTTON_LONG,
-    .pin          = &DDRC,
+    .pin          = &PINC,
     .bit          = PC4   
 };
 
@@ -25,7 +25,7 @@ Button button_hall = {
     .timer_id     = 1,
     .msg_id_short = MSG_BUTTON_HALL,
     .msg_id_long  = MSG_BUTTON_LONG,
-    .pin          = &DDRC,
+    .pin          = &PINC,
     .bit          = PC5
 };
 
@@ -33,7 +33,7 @@ Button button_kitchen = {
     .timer_id     = 2,
     .msg_id_short = MSG_BUTTON_KITCHEN,
     .msg_id_long  = MSG_BUTTON_LONG,
-    .pin          = &DDRD,
+    .pin          = &PIND,
     .bit          = PD0
 };
 
@@ -69,6 +69,7 @@ int main() {
     //output ports
     DDRC |= 1<<PC0 | 1<<PC1 | 1<<PC2 | 1<<PC3;
     msg_init(4);
+    timers_init(4);
     button_room_state = button_hall_state = button_kitchen_state = button_fsm_init();
     sei();
     while(1) { 
