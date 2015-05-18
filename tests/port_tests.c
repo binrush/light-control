@@ -13,9 +13,12 @@ char *test_port()
     fake_port = 0x00;
     Port_Set(&port);
     mu_assert(fake_port == 0x01, "Set should set port bit");
+    Port_Set(&port);
+    mu_assert(fake_port == 0x01, "Set should not change port that is already set");
     Port_Clear(&port);
     mu_assert(fake_port == 0x00, "Clear should clear prot bit");
-
+    Port_Clear(&port);
+    mu_assert(fake_port == 0x00, "Clear should not change port that is already clean");
     return NULL;
 }
 
