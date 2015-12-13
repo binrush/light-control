@@ -19,7 +19,11 @@ uint8_t button_fsm(uint8_t state, Button *button) {
             break;
         case STATE_BUTTON_NOISE_DELAY:
             if (timer_get(button->timer_id) >= BUTTON_NOISE_DELAY) {
-                state = STATE_BUTTON_COUNT_LENGTH;
+                if ( ! Button_Read(button) ) {
+                    state = STATE_BUTTON_COUNT_LENGTH;
+                } else {
+                    state = STATE_BUTTON_RELEASED;
+                }
             }
             break;
         case STATE_BUTTON_COUNT_LENGTH:

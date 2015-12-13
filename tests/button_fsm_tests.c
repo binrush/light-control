@@ -51,6 +51,7 @@ char *test_button_not_pressed()
     return NULL;    
 }
 
+
 char *test_button_short_push()
 {
     tests_setup();
@@ -114,10 +115,17 @@ char *test_button_noise_delay()
     mu_assert(state == STATE_BUTTON_NOISE_DELAY, "State should not be changed during noise prevention delay");
     mu_assert(msg_get(button.msg_id_long) == 0 && msg_get(button.msg_id_short) == 0, "Messages should not be sent during noise prevention delay");
 
+    fake_pin = 0xff;
+    timer_set(BUTTON_NOISE_DELAY + 2);
+    state = button_fsm(state, &button);
+
+    mu_assert(state == STATE_BUTTON_RELEASED, "Button FSM should return to init state if button released during noise timeout");
+
     tests_teardown();
 
     return NULL;
 }
+
 
 char *all_tests()
 {
